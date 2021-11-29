@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#Dws-dev-002-bash number 2
+#Name: Nima Tabatabaee
+#Class: Bloodrina
+
+
+#Set environment variable
+export TRY_INTERVAL=3
+export TRY_NUMBER=2
+export TRY_COMMAND="flask app test"
+
+
+function int {
+	if [[ $interval -eq 0 ]]; then
+       interval=$TRY_INTERVAL   
+       if [[ $interval -eq 0 ]]; then
+          interval=5
+       fi
+    fi   
+}
+
+function num {
+	if [[ $number -eq 0 ]]; then
+       number=$TRY_NUMBER
+       if [[ $number -eq 0 ]]; then
+          number=12 
+       fi
+    fi
+}
+
+
+while true; do
+    case $2 in
+      -i)      
+         interval=$3
+         echo "Your Try-Interval is:" $interval
+         shift 2
+         ;;
+      -n)
+         number=$3
+         echo "Your Try-Number is:" $number
+         shift 2
+         ;;
+       *)
+         shift 1
+         command=$@
+         if [[ $# -eq 0 ]]; then
+             int
+             num           
+             command=$TRY_COMMAND
+             if [[ $command -eq 0 ]]; then
+                 echo "You don't enter any command and env command is empty"
+                 exit 1;
+             fi             
+         else          
+             int  
+             num          
+         fi  
+             
+         echo "Your Command is:" $command
+         com=1
+         shift 3
+         if [[ $# -eq 0 ]]; then
+             break
+         fi
+         echo "Unknown Command"
+         exit 1
+         ;;   
+      esac    
+done 
+
+
+if [[ $com -eq 1 ]]; then
+   echo "Run your command:" $command
+   $command
+   if [[ $? -eq 0 ]]; then
+       echo "Command run successfully"
+       exit 0
+   else
+       for ((i=1; i<=$number ; i++)) ; do
+          sleep $interval
+          echo "Try to Run your command in try" $i
+          $command
+          if [[ $? -eq 0 ]]; then
+             echo "command run successfully in try" $i
+             exit 0
+          fi   
+       done
+       echo "Error, command couldn't run"
+       exit 1
+    fi        
+fi
+    
+
+

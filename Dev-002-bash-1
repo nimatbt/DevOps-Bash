@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#Dws-dev-002-bash number 1
+#Name: Nima Tabatabaee
+#Class: Bloodrina
+
+
+while true; do
+    case $2 in
+      -i)      
+         interval=$3
+         echo "Your Try-Interval is:" $interval
+         shift 2
+         ;;
+      -n)
+         number=$3
+         echo "Your Try-Number is:" $number
+         shift 2
+         ;;
+       *)
+         shift 1
+         command=$@
+         if [[ $# -eq 0 ]]; then
+             echo "Please enter your command"
+             exit 0;
+         fi    
+         echo "Your Command is:" $command
+         com=1
+         shift 3
+         if [[ $# -eq 0 ]]; then
+             break
+         fi
+         echo "Unknown Command"
+         exit 1
+         ;;   
+      esac    
+done 
+
+if [[ $com -eq 1 ]]; then
+   echo "Run your command:" $command
+   $command
+   if [[ $? -eq 0 ]]; then
+       echo "Command run successfully"
+       exit 0
+   else
+       for ((i=1; i<=$number ; i++)) ; do
+          sleep $interval
+          echo "Try to Run your command in try" $i
+          $command
+          if [[ $? -eq 0 ]]; then
+             echo "command run successfully in try" $i
+             exit 0
+          fi   
+       done
+       echo "Error, command couldn't run"
+       exit 1
+    fi        
+fi
